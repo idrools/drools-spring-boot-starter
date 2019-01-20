@@ -1,0 +1,12 @@
+package com.zhangxh.lessons.lesson3;
+import com.idrools.spring.boot.test.model.Account
+import com.idrools.spring.boot.test.model.CashFlow;
+
+rule "credit rule"
+    when
+
+        $cash:CashFlow(type==CashFlow.CREDIT)
+        $acc:Account()
+    then
+        $acc.setBalance($acc.getBalance()+$cash.getAmount());
+end

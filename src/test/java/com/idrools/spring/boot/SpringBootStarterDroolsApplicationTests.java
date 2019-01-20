@@ -1,16 +1,18 @@
 package com.idrools.spring.boot;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import com.idrools.spring.boot.configuration.DroolsAutoConfiguration;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@Configuration
+@EnableAutoConfiguration
+@Import(DroolsAutoConfiguration.class)
 public class SpringBootStarterDroolsApplicationTests {
 
-	@Test
-	public void contextLoads() {
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootStarterDroolsApplicationTests.class, args);
 	}
 
 }
