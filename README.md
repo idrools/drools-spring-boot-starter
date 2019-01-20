@@ -1,1 +1,1 @@
-# spring-boot-starter-drools
+# drools-spring-boot-starter
