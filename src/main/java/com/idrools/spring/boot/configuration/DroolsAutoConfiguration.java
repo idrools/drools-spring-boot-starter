@@ -1,4 +1,4 @@
-package com.idrools.spring.boot;
+package com.idrools.spring.boot.configuration;
 
 import org.kie.api.KieBase;
 import org.kie.api.KieServices;
