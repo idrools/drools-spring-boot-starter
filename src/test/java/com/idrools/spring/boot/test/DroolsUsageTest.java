@@ -26,7 +26,6 @@ public class DroolsUsageTest {
 
     @Test
     public void testCashFlow() throws Exception{
-
         Account account = new Account();
         account.setAccountNo(1);
         account.setBalance(0);
