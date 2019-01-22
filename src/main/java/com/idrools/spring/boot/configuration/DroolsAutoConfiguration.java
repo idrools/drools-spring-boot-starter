@@ -1,5 +1,8 @@
 package com.idrools.spring.boot.configuration;
 
+import org.drools.compiler.kie.builder.impl.ClasspathKieProject;
+import org.drools.compiler.kproject.ReleaseIdImpl;
+import org.drools.core.common.ProjectClassLoader;
 import org.kie.api.KieBase;
 import org.kie.api.KieServices;
 import org.kie.api.builder.*;
@@ -15,6 +18,9 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.IOException;
+import java.net.URL;
+
+import static org.drools.compiler.kie.builder.impl.ClasspathKieProject.fixURLFromKProjectPath;
 
 /**
  * created by idrools007 2019/1/20
@@ -23,6 +29,7 @@ import java.io.IOException;
 public class DroolsAutoConfiguration {
     private static final String RULES_PATH = "rules/";
 
+    private static final String CONFIG_RULE = "META-INF/kmodule.xml";
     @Bean
     @ConditionalOnMissingBean(KieFileSystem.class)
     public KieFileSystem kieFileSystem() throws IOException {
@@ -69,6 +76,14 @@ public class DroolsAutoConfiguration {
     @ConditionalOnMissingBean(KieSession.class)
     public KieSession kieSession() throws IOException {
         return kieContainer().newKieSession();
+    }
+    @Bean
+    @ConditionalOnMissingBean(ReleaseId.class)
+    public ReleaseId releaseId() throws IOException {
+        ClassLoader classLoader=  ProjectClassLoader.findParentClassLoader();
+        URL url =  classLoader.getResources(CONFIG_RULE).nextElement();
+        String pomProperties = ClasspathKieProject.getPomProperties(fixURLFromKProjectPath(url));
+        return pomProperties != null ? ReleaseIdImpl.fromPropertiesString(pomProperties) : KieServices.Factory.get().getRepository().getDefaultReleaseId();
     }
 
     @Bean
