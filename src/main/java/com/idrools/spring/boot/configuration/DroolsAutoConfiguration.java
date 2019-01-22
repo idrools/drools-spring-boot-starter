@@ -19,6 +19,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Enumeration;
 
 import static org.drools.compiler.kie.builder.impl.ClasspathKieProject.fixURLFromKProjectPath;
 
@@ -30,6 +31,7 @@ public class DroolsAutoConfiguration {
     private static final String RULES_PATH = "rules/";
 
     private static final String CONFIG_RULE = "META-INF/kmodule.xml";
+    private static final String CONFIG_RULE_SPRING = "META-INF/kmodule-spring.xml";
     @Bean
     @ConditionalOnMissingBean(KieFileSystem.class)
     public KieFileSystem kieFileSystem() throws IOException {
@@ -81,8 +83,11 @@ public class DroolsAutoConfiguration {
     @ConditionalOnMissingBean(ReleaseId.class)
     public ReleaseId releaseId() throws IOException {
         ClassLoader classLoader=  ProjectClassLoader.findParentClassLoader();
-        URL url =  classLoader.getResources(CONFIG_RULE).nextElement();
-        String pomProperties = ClasspathKieProject.getPomProperties(fixURLFromKProjectPath(url));
+        Enumeration<URL> enumeration = classLoader.getResources(CONFIG_RULE);
+        if (!enumeration.hasMoreElements()) {
+            enumeration= classLoader.getResources(CONFIG_RULE_SPRING);
+        }
+        String pomProperties = ClasspathKieProject.getPomProperties(fixURLFromKProjectPath(enumeration.nextElement()));
         return pomProperties != null ? ReleaseIdImpl.fromPropertiesString(pomProperties) : KieServices.Factory.get().getRepository().getDefaultReleaseId();
     }
 

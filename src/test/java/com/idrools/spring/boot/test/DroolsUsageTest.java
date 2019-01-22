@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.net.URL;
+import java.util.Enumeration;
 
 import static org.drools.compiler.kie.builder.impl.ClasspathKieProject.fixURLFromKProjectPath;
 
@@ -49,14 +50,18 @@ public class DroolsUsageTest {
         Assert.assertEquals(rulefireCount,1);
 
     }
+    private static final String CONFIG_RULE = "META-INF/kmodule.xml";
+    private static final String CONFIG_RULE_SPRING = "META-INF/kmodule-spring.xml";
     @Test
     public void testClasspath() throws Exception{
         ClassLoader classLoader=  ProjectClassLoader.findParentClassLoader();
-        String configFiles = "META-INF/kmodule.xml";
-//        URL url = (URL)classLoader.getResource().nextElement();
-        URL url = (URL) classLoader.getResources(configFiles).nextElement();
+        Enumeration<URL> enumeration = classLoader.getResources(CONFIG_RULE);
+        if (enumeration == null) {
+            enumeration= classLoader.getResources(CONFIG_RULE_SPRING);
+        }
+        URL url =  enumeration.nextElement();
         String pomProperties = ClasspathKieProject.getPomProperties(fixURLFromKProjectPath(url));
-        ReleaseId releaseId = pomProperties != null ? ReleaseIdImpl.fromPropertiesString(pomProperties) : KieServices.Factory.get().getRepository().getDefaultReleaseId();
+        ReleaseId releaseId=  pomProperties != null ? ReleaseIdImpl.fromPropertiesString(pomProperties) : KieServices.Factory.get().getRepository().getDefaultReleaseId();
 
 
     }
